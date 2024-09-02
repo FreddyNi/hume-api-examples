@@ -14,6 +14,9 @@ export default function ClientComponent({
   const timeout = useRef<number | null>(null);
   const ref = useRef<ComponentRef<typeof Messages> | null>(null);
 
+  // Fetch the configId from the environment variables
+  const configId = process.env.NEXT_PUBLIC_HUME_CONFIG_ID || "fallback-config-id"; // Use the env value or a fallback
+
   return (
     <div
       className={
@@ -22,6 +25,7 @@ export default function ClientComponent({
     >
       <VoiceProvider
         auth={{ type: "accessToken", value: accessToken }}
+        configId={configId} // Use the configId from .env
         onMessage={() => {
           if (timeout.current) {
             window.clearTimeout(timeout.current);
@@ -46,3 +50,4 @@ export default function ClientComponent({
     </div>
   );
 }
+
