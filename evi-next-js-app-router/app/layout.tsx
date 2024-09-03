@@ -21,11 +21,12 @@ export default function RootLayout({
         className={cn(
           GeistSans.variable,
           GeistMono.variable,
-          "flex flex-col min-h-screen",
+          "flex flex-col min-h-screen overflow-x-hidden", // Ensure no horizontal overflow
+          "relative" // Ensure children elements are positioned relative to this context
         )}
       >
         <Nav />
-        {children}
+        <main className="grow flex flex-col relative">{children}</main>
       </body>
     </html>
   );

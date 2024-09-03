@@ -47,13 +47,22 @@
     --input: 240 3.7% 15.9%;
     --ring: 240 4.9% 83.9%;
   }
-}
 
-@layer base {
-  * {
-    @apply border-border font-sans;
+  /* Ensure buttons aren't clipped */
+  .fixed-bottom-controls {
+    overflow: visible !important;
+    padding-bottom: env(safe-area-inset-bottom);
   }
-  body {
-    @apply bg-background text-foreground;
+
+  /* Ensure the red button isn't clipped */
+  button[variant="destructive"] {
+    margin-right: 8px !important; /* Add some space on the right side */
+    padding-right: 12px !important; /* Ensure padding is adequate */
+  }
+
+  /* Optional: Ensure proper button visibility on all devices */
+  button {
+    max-width: 100%;
+    box-sizing: border-box;
   }
 }

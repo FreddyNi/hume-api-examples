@@ -11,6 +11,10 @@ export default function MicFFT({
   fft: number[];
   className?: string;
 }) {
+  if (!fft || fft.length === 0) {
+    return null; // Don't render if there's no data
+  }
+
   return (
     <div className={"relative size-full"}>
       <AutoSizer>
