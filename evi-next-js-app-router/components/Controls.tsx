@@ -12,16 +12,24 @@ export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   
-  // State variable to hold the interval value, defaulting to 5000ms (5 seconds)
+  // Initialize repeatInterval and repeatMessage with default values
   const [repeatInterval, setRepeatInterval] = useState(5000);
-  const [repeatMessage, setRepeatMessage] = useState("Repeat please"); // Default message
+  const [repeatMessage, setRepeatMessage] = useState("Repeat please");
 
-  // Load config.json and extract the repeat message
+  // Load config.json and extract repeatInterval and repeatMessage
   useEffect(() => {
     const loadConfig = async () => {
       try {
         const response = await fetch("/config/config.json");
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
         const config = await response.json();
+
+        // Set the repeatInterval and repeatMessage from config.json
+        if (config.repeatInterval) {
+          setRepeatInterval(config.repeatInterval);
+        }
         if (config.repeatMessage) {
           setRepeatMessage(config.repeatMessage);
         }
@@ -29,7 +37,7 @@ export default function Controls() {
         console.error("Error loading configuration:", error);
       }
     };
-    
+
     loadConfig();
   }, []);
 
@@ -38,7 +46,7 @@ export default function Controls() {
     timerRef.current = setTimeout(() => {
       sendUserInput(repeatMessage); // Use the message from config
       resetTimer(); // Restart the timer after sending the message
-    }, repeatInterval); // Use the state variable for the interval
+    }, repeatInterval); // Use the interval from config
   };
 
   const resetTimer = () => {

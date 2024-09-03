@@ -1,4 +1,4 @@
 {
-    "repeatMessage": "Repeat"
-  }
-  
+  "repeatMessage": "Repeat please",
+  "repeatInterval": 20000
+}
