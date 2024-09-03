@@ -12,12 +12,15 @@ export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  // State variable to hold the interval value, defaulting to 5000ms (5 seconds)
+  const [repeatInterval, setRepeatInterval] = useState(5000);
+
   const startTimer = () => {
     stopTimer(); // Ensure any previous timer is stopped
     timerRef.current = setTimeout(() => {
       sendUserInput("Repeat please");
       resetTimer(); // Restart the timer after sending the message
-    }, 5000); // 5000ms = 5 seconds
+    }, repeatInterval); // Use the state variable for the interval
   };
 
   const resetTimer = () => {
