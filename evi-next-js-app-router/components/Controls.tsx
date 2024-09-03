@@ -11,7 +11,9 @@ import { useEffect, useRef, useState } from "react";
 export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  
+  const callTimeoutRef = useRef<NodeJS.Timeout | null>(null);  // Reference to store the call timeout
+  const threshold = 30000;  // 30 seconds threshold for ending the call
+
   // Initialize repeatInterval and repeatMessage with default values
   const [repeatInterval, setRepeatInterval] = useState(5000);
   const [repeatMessage, setRepeatMessage] = useState("Repeat please");
@@ -42,37 +44,54 @@ export default function Controls() {
   }, []);
 
   const startTimer = () => {
-    stopTimer(); // Ensure any previous timer is stopped
+    stopTimer();  // Ensure any previous timer is stopped
     timerRef.current = setTimeout(() => {
-      sendUserInput(repeatMessage); // Use the message from config
-      resetTimer(); // Restart the timer after sending the message
-    }, repeatInterval); // Use the interval from config
+      sendUserInput(repeatMessage);  // Use the message from config
+      resetTimer();  // Restart the timer after sending the message
+    }, repeatInterval);  // Use the interval from config
   };
 
   const resetTimer = () => {
-    startTimer(); // Start the timer again
+    startTimer();  // Start the timer again
   };
 
   const stopTimer = () => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
-      timerRef.current = null; // Clear the reference to avoid re-triggering
+      timerRef.current = null;  // Clear the reference to avoid re-triggering
     }
+  };
+
+  const startCallTimeout = () => {
+    if (callTimeoutRef.current) {
+      clearTimeout(callTimeoutRef.current);
+    }
+    callTimeoutRef.current = setTimeout(() => {
+      disconnect();  // Automatically end the call after the threshold
+    }, threshold);
   };
 
   useEffect(() => {
     if (status.value === "connected") {
-      startTimer(); // Start the timer when connected
+      startTimer();  // Start the repeat message timer
+      startCallTimeout();  // Start the call timeout
+    } else {
+      if (callTimeoutRef.current) {
+        clearTimeout(callTimeoutRef.current);  // Clear the call timeout if the call is disconnected
+      }
     }
 
     return () => {
-      stopTimer(); // Clean up the timer when the component unmounts or disconnects
+      stopTimer();  // Clean up the repeat message timer when the component unmounts or disconnects
+      if (callTimeoutRef.current) {
+        clearTimeout(callTimeoutRef.current);  // Clean up the call timeout
+      }
     };
   }, [status]);
 
   useEffect(() => {
     if (messages.length > 0) {
-      resetTimer(); // Reset the timer whenever a new message is received
+      resetTimer();  // Reset the repeat message timer whenever a new message is received
     }
   }, [messages]);
 
@@ -127,7 +146,10 @@ export default function Controls() {
             className={"flex items-center gap-1 flex-shrink-0"}
             onClick={() => {
               disconnect();
-              stopTimer(); // Stop the timer when the call ends
+              stopTimer();  // Stop the repeat message timer when the call ends
+              if (callTimeoutRef.current) {
+                clearTimeout(callTimeoutRef.current);  // Stop the call timeout when the call ends manually
+              }
             }}
             variant={"destructive"}
             style={{ padding: "0 8px", borderRadius: "8px" }}
@@ -146,3 +168,4 @@ export default function Controls() {
     </div>
   );
 }
+
