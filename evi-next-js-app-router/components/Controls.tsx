@@ -11,14 +11,32 @@ import { useEffect, useRef, useState } from "react";
 export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-
+  
   // State variable to hold the interval value, defaulting to 5000ms (5 seconds)
   const [repeatInterval, setRepeatInterval] = useState(5000);
+  const [repeatMessage, setRepeatMessage] = useState("Repeat please"); // Default message
+
+  // Load config.json and extract the repeat message
+  useEffect(() => {
+    const loadConfig = async () => {
+      try {
+        const response = await fetch("/config/config.json");
+        const config = await response.json();
+        if (config.repeatMessage) {
+          setRepeatMessage(config.repeatMessage);
+        }
+      } catch (error) {
+        console.error("Error loading configuration:", error);
+      }
+    };
+    
+    loadConfig();
+  }, []);
 
   const startTimer = () => {
     stopTimer(); // Ensure any previous timer is stopped
     timerRef.current = setTimeout(() => {
-      sendUserInput("Repeat please");
+      sendUserInput(repeatMessage); // Use the message from config
       resetTimer(); // Restart the timer after sending the message
     }, repeatInterval); // Use the state variable for the interval
   };
