@@ -10,13 +10,35 @@ import { useEffect, useRef, useState } from "react";
 
 export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
-  const [elapsedTime, setElapsedTime] = useState(0);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const startTimer = () => {
+    stopTimer(); // Ensure any previous timer is stopped
+    timerRef.current = setTimeout(() => {
+      sendUserInput("Repeat please");
+      resetTimer(); // Restart the timer after sending the message
+    }, 5000); // 5000ms = 5 seconds
+  };
+
+  const resetTimer = () => {
+    startTimer(); // Start the timer again
+  };
+
+  const stopTimer = () => {
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null; // Clear the reference to avoid re-triggering
+    }
+  };
 
   useEffect(() => {
     if (status.value === "connected") {
-      resetTimer(); // Reset the timer on connection
+      startTimer(); // Start the timer when connected
     }
+
+    return () => {
+      stopTimer(); // Clean up the timer when the component unmounts or disconnects
+    };
   }, [status]);
 
   useEffect(() => {
@@ -24,38 +46,6 @@ export default function Controls() {
       resetTimer(); // Reset the timer whenever a new message is received
     }
   }, [messages]);
-
-  const startTimer = () => {
-    stopTimer(); // Ensure no previous timers are running
-    timerRef.current = setInterval(() => {
-      setElapsedTime((prevTime) => {
-        const newTime = prevTime + 1;
-        if (newTime >= 20) {
-          sendUserInput("Repeat please");
-          resetTimer(); // Reset the timer after sending the message
-        }
-        return newTime;
-      });
-    }, 1000); // Update the time every second
-  };
-
-  const resetTimer = () => {
-    setElapsedTime(0); // Reset the displayed time
-    startTimer(); // Start the timer again
-  };
-
-  const stopTimer = () => {
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
-    }
-  };
-
-  useEffect(() => {
-    // Clean up the timer when the component unmounts or disconnects
-    return () => {
-      stopTimer();
-    };
-  }, []);
 
   return (
     <div
@@ -122,11 +112,6 @@ export default function Controls() {
             </span>
             <span>End Call</span>
           </Button>
-
-          {/* Display elapsed time */}
-          <div className="ml-4">
-            <span>Time since last response: {elapsedTime}s</span>
-          </div>
         </motion.div>
       )}
     </div>
