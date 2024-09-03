@@ -1,4 +1,5 @@
 {
   "repeatMessage": "Repeat please",
-  "repeatInterval": 5000
+  "repeatInterval": 20000,
+  "callEndThreshold": 160000
 }

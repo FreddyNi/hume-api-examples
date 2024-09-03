@@ -12,13 +12,13 @@ export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const callTimeoutRef = useRef<NodeJS.Timeout | null>(null);  // Reference to store the call timeout
-  const threshold = 30000;  // 30 seconds threshold for ending the call
 
-  // Initialize repeatInterval and repeatMessage with default values
+  // Initialize state values with default values
   const [repeatInterval, setRepeatInterval] = useState(5000);
   const [repeatMessage, setRepeatMessage] = useState("Repeat please");
+  const [callEndThreshold, setCallEndThreshold] = useState(30000);  // Default threshold for ending the call
 
-  // Load config.json and extract repeatInterval and repeatMessage
+  // Load config.json and extract repeatInterval, repeatMessage, and callEndThreshold
   useEffect(() => {
     const loadConfig = async () => {
       try {
@@ -28,12 +28,15 @@ export default function Controls() {
         }
         const config = await response.json();
 
-        // Set the repeatInterval and repeatMessage from config.json
+        // Set the repeatInterval, repeatMessage, and callEndThreshold from config.json
         if (config.repeatInterval) {
           setRepeatInterval(config.repeatInterval);
         }
         if (config.repeatMessage) {
           setRepeatMessage(config.repeatMessage);
+        }
+        if (config.callEndThreshold) {
+          setCallEndThreshold(config.callEndThreshold);
         }
       } catch (error) {
         console.error("Error loading configuration:", error);
@@ -68,7 +71,7 @@ export default function Controls() {
     }
     callTimeoutRef.current = setTimeout(() => {
       disconnect();  // Automatically end the call after the threshold
-    }, threshold);
+    }, callEndThreshold);  // Use the threshold from config
   };
 
   useEffect(() => {
@@ -168,4 +171,3 @@ export default function Controls() {
     </div>
   );
 }
-
