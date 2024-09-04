@@ -7,6 +7,7 @@ import { Toggle } from "./ui/toggle";
 import MicFFT from "./MicFFT";
 import { cn } from "@/utils";
 import { useEffect, useRef, useState } from "react";
+import ButtonsContainer from "./ui/buttons/ButtonsContainer";  // Import the ButtonsContainer
 
 export default function Controls() {
   const { disconnect, status, isMuted, unmute, mute, micFft, messages, sendUserInput } = useVoice();
@@ -101,7 +102,7 @@ export default function Controls() {
   return (
     <div
       className={cn(
-        "fixed bottom-0 left-0 w-full p-4 flex items-center justify-center",
+        "fixed bottom-0 left-0 w-full p-4 flex flex-col items-center justify-center",  // Changed to "flex-col" to stack items vertically
         "bg-gradient-to-t from-card via-card/90 to-card/0",
       )}
     >
@@ -168,6 +169,9 @@ export default function Controls() {
           </Button>
         </motion.div>
       )}
+
+      {/* Render the ButtonsContainer below the existing controls */}
+      <ButtonsContainer />  {/* This will now appear below the mic and call controls */}
     </div>
   );
 }

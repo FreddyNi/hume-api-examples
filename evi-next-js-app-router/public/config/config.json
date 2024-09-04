@@ -1,5 +1,13 @@
 {
   "repeatMessage": "Repeat please",
   "repeatInterval": 20000,
-  "callEndThreshold": 160000
+  "callEndThreshold": 160000,
+  "button1": {
+    "label": "Ready",
+    "message": "Ready"
+  },
+  "button2": {
+    "label": "Not yet",
+    "message": "Not yet"
+  }
 }
