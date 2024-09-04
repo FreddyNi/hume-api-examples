@@ -19,6 +19,26 @@ export default function Controls() {
   const [repeatMessage, setRepeatMessage] = useState("Repeat please");
   const [callEndThreshold, setCallEndThreshold] = useState(30000);  // Default threshold for ending the call
 
+  // Listen for tool call events like updating repeatInterval
+  useEffect(() => {
+    const updateIntervalHandler = (event: CustomEvent) => {
+      const newInterval = event.detail;
+      console.log(`Updating repeatInterval to: ${newInterval}`);
+      
+      if (typeof newInterval === 'number') {
+        setRepeatInterval(newInterval); // Safely set the repeatInterval state
+      } else {
+        console.error("Invalid value for repeatInterval:", newInterval);
+      }
+    };
+
+    document.addEventListener("updateRepeatInterval", updateIntervalHandler);
+
+    return () => {
+      document.removeEventListener("updateRepeatInterval", updateIntervalHandler);
+    };
+  }, []);
+
   // Load config.json and extract repeatInterval, repeatMessage, and callEndThreshold
   useEffect(() => {
     const loadConfig = async () => {
@@ -52,7 +72,7 @@ export default function Controls() {
     timerRef.current = setTimeout(() => {
       sendUserInput(repeatMessage);  // Use the message from config
       resetTimer();  // Restart the timer after sending the message
-    }, repeatInterval);  // Use the interval from config
+    }, repeatInterval);  // Use the interval from config or the tool call
   };
 
   const resetTimer = () => {

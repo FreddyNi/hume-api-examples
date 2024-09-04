@@ -5,6 +5,7 @@ import Messages from "./Messages";
 import Controls from "./Controls";
 import StartCall from "./StartCall";
 import { ComponentRef, useRef } from "react";
+import { handleToolCall } from "@/utils/toolHandler"; // Import the tool handler function
 
 export default function ClientComponent({
   accessToken,
@@ -26,9 +27,18 @@ export default function ClientComponent({
       <VoiceProvider
         auth={{ type: "accessToken", value: accessToken }}
         configId={configId} // Use the configId from .env
-        onMessage={() => {
+        onMessage={(message) => {
           if (timeout.current) {
             window.clearTimeout(timeout.current);
+          }
+
+          // Log when a message is received for debugging purposes
+          console.log("Message received from EVI:", message);
+
+          // Delegate tool call processing to a utility function
+          if (message.type === "tool_call") {
+            console.log("Tool call received, passing to handler."); // Debugging log
+            handleToolCall(message); // Handle tool call in a separate utility function
           }
 
           timeout.current = window.setTimeout(() => {
@@ -50,4 +60,3 @@ export default function ClientComponent({
     </div>
   );
 }
-
