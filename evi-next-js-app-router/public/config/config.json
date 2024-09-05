@@ -1,6 +1,6 @@
 {
   "repeatMessage": "Repeat please",
-  "repeatInterval": 20000,
+  "repeatInterval": 200000,
   "callEndThreshold": 160000,
   "button1": {
     "label": "Ready",
@@ -9,5 +9,10 @@
   "button2": {
     "label": "Not yet",
     "message": "Not yet"
-  }
+  },
+  "keywordDelays": [
+    { "keyword": "medicine", "delay": 20000 },
+    { "keyword": "hands", "delay": 15000 },
+    { "keyword": "breakfast", "delay": 10000 }
+  ]
 }
