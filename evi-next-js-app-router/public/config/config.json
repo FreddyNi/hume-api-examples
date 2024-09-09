@@ -15,8 +15,11 @@
   "helpMessage": "If you need help please look in the manual at page 233", 
 
   "keywordDelays": [
-    { "keyword": "medicine", "delay": 20000 },
-    { "keyword": "hands", "delay": 15000 },
-    { "keyword": "breakfast", "delay": 10000 }
+    { "keyword": "dear", "delay": 120000 },
+    { "keyword": "medicine", "delay": 120000 },
+    { "keyword": "breakfast", "delay": 300000 },
+    { "keyword": "bathroom", "delay": 120000 },
+    { "keyword": "teeth", "delay": 120000 },
+    { "keyword": "dressed", "delay": 120000 }
   ]
 }
