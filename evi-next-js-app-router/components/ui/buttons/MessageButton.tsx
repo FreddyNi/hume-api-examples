@@ -1,24 +1,27 @@
 "use client";
-
 import { useVoice } from "@humeai/voice-react";
-import { Button } from "../button";  // Use the existing general button component
+import { Button } from "./Button"; // Ensure this path is correct
 
 interface MessageButtonProps {
-  message: string;  // The message to send when the button is clicked
-  label: string;    // The label for the button
-  variant?: string; // Optional: Pass button variant (default, destructive, etc.)
-  size?: string;    // Optional: Pass button size (sm, lg, etc.)
+  message: string;
+  label: string;
+  variant: string;
+  size: string;
 }
 
-export default function MessageButton({ message, label, variant = "default", size = "default" }: MessageButtonProps) {
+export default function MessageButton({ message, label, variant, size }: MessageButtonProps) {
   const { sendUserInput } = useVoice();
 
+  const handleClick = () => {
+    // Print the message to the console (or you can display it on the UI)
+    console.log(`${label} button clicked: ${message}`);
+
+    // Send the message to EVI for text-to-speech (TTS)
+    sendUserInput(message);
+  };
+
   return (
-    <Button
-      onClick={() => sendUserInput(message)}  // Send the message when clicked
-      variant={variant}  // Use button variants (e.g., default, destructive)
-      size={size}        // Use button sizes (e.g., sm, lg)
-    >
+    <Button onClick={handleClick} variant={variant} size={size}>
       {label}
     </Button>
   );

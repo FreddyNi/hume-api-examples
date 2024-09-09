@@ -2,6 +2,7 @@
   "repeatMessage": "Repeat please",
   "repeatInterval": 200000,
   "callEndThreshold": 160000,
+
   "button1": {
     "label": "Ready",
     "message": "Ready"
@@ -10,6 +11,9 @@
     "label": "Not yet",
     "message": "Not yet"
   },
+
+  "helpMessage": "If you need help please look in the manual at page 233", 
+
   "keywordDelays": [
     { "keyword": "medicine", "delay": 20000 },
     { "keyword": "hands", "delay": 15000 },
